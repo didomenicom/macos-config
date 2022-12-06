@@ -14,6 +14,7 @@ xcode-select --install
 
 # Customizing macOS
 ## Computer Name
+echo "Setting computer name. You will be prompted for password 3 times."
 scutil --set ComputerName "mdmbp18"
 scutil --set LocalHostName "mdmbp18"
 scutil --set HostName "mdmbp18"

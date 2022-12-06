@@ -6,7 +6,9 @@ This covers setting up a MacBook Pro in as much of an automated/scripted way as 
 
 Run the following command to download the setup script on the computer to be configured
 
-	curl https://github.com/didomenicom/macos-config/setup.sh --output ~/Downloads/setup.sh
+	curl https://raw.githubusercontent.com/didomenicom/macos-config/main/setup.sh --output ~/Downloads/setup.sh
+	cd ~/Downloads
+
 
 ## Misc notes
 
