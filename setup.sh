@@ -29,7 +29,7 @@ defaults write com.apple.dock showhidden -bool yes
 
 ### Order: Finder, Slack, Discord, Mail, Spotify, Brave, Chrome, VMWare, TextEdit, MacVIM, Calculator, Terminal, Preview, VSCode, Postman
 defaults write com.apple.dock persistent-apps -array
-defaults write com.apple.dock persistent-apps -array-add \
+echo \
 	"<dict>" \
 		"<key>tile-data</key>" \
 		"<dict>" \
@@ -41,8 +41,8 @@ defaults write com.apple.dock persistent-apps -array-add \
 				"<integer>0</integer>" \
 			"</dict>" \
 		"</dict>" \
-	"</dict>"
-defaults write com.apple.dock persistent-apps -array-add \
+	"</dict>" | defaults write com.apple.dock persistent-apps -array-add
+echo \
 	"<dict>" \
 		"<key>tile-data</key>" \
 		"<dict>" \
@@ -54,10 +54,10 @@ defaults write com.apple.dock persistent-apps -array-add \
 				"<integer>0</integer>" \
 			"</dict>" \
 		"</dict>" \
-	"</dict>"
+	"</dict>" | defaults write com.apple.dock persistent-apps -array-add
 
 defaults write com.apple.dock persistent-others -array
-defaults write com.apple.dock persistent-others -array-add \
+echo \
 	"<dict>" \
 		"<key>tile-data</key>" \
 		"<dict>" \
@@ -75,15 +75,15 @@ defaults write com.apple.dock persistent-others -array-add \
 		"</dict>" \
 		"<key>tile-type</key>" \
 		"<string>directory-tile</string>" \
-	"</dict>"
-defaults write com.apple.dock persistent-others -array-add \
+	"</dict>" | defaults write com.apple.dock persistent-others -array-add
+echo \
 	"<dict>" \
 		"<key>tile-data</key>" \
 		"<dict>" \
 			"<key>file-data</key>" \
 			"<dict>" \
 				"<key>_CFURLString</key>" \
-				"<string>file:///Users/didomenicom/Downloads/</string>" \
+				"<string>file://$HOME/Downloads/</string>" \
 				"<key>_CFURLStringType</key>" \
 				"<integer>15</integer>" \
 			"</dict>" \
@@ -94,7 +94,7 @@ defaults write com.apple.dock persistent-others -array-add \
 		"</dict>" \
 		"<key>tile-type</key>" \
 		"<string>directory-tile</string>" \
-	"</dict>"
+	"</dict>" | defaults write com.apple.dock persistent-others -array-add
 
 defaults write com.apple.dock expose-animation-duration -float 0.1
 defaults write com.apple.dock "expose-group-by-app" -bool true
