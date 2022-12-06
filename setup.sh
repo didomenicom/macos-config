@@ -79,19 +79,18 @@ defaults write com.apple.dock tilesize -integer 48
 defaults write com.apple.dock showhidden -bool yes
 
 defaults write com.apple.dock persistent-apps -array \
-	"$(generateDockItem /Applications/Finder.app)" \
 	"$(generateDockItem /Applications/Slack.app)" \
 	"$(generateDockItem /Applications/Discord.app)" \
-	"$(generateDockItem /Applications/Mail.app)" \
+	"$(generateDockItem /System/Applications/Mail.app)" \
 	"$(generateDockItem /Applications/Spotify.app)" \
-	"$(generateDockItem /Applications/Brave.app)" \
-	"$(generateDockItem /Applications/Google Chrome.app)" \
+	"$(generateDockItem /Applications/Brave\ Browser.app)" \
+	"$(generateDockItem /Applications/Google\ Chrome.app)" \
 	"$(generateDockItem /System/Applications/TextEdit.app)" \
 	"$(generateDockItem /Applications/MacVim.app)" \
 	"$(generateDockItem /System/Applications/Calculator.app)" \
 	"$(generateDockItem /System/Applications/Utilities/Terminal.app)" \
 	"$(generateDockItem /System/Applications/Preview.app)" \
-	"$(generateDockItem /Applications/VSCode.app)" \
+	"$(generateDockItem /Applications/Visual\ Studio\ Code.app)" \
 	"$(generateDockItem /Applications/Postman.app)"
 
 defaults write com.apple.dock persistent-others -array \
