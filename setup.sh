@@ -38,6 +38,8 @@ generateDockFolderItem() {
 		"</dict>"
 }
 
+# TODO: Prompt before each section
+
 # Check if running as root user
 echo "Checking if running as root user";
 if [[ $EUID -eq 0 ]]
@@ -47,18 +49,28 @@ then
 fi
 
 # Install x-code
-xcode-select -p > /dev/null
+# TODO: Auto accept terms. Also install command line tools.
+xcode-select -p &> /dev/null
 if [ $? -ne 0 ]
 then
 	echo "Installing xcode"
-	xcode-select --install
+#	xcode-select --install
+# gist.github.com/monkagio/b974620ee8dcf5c0671f
+	touch /tmp/.com.apple.dt.CommandLineTools.installondemand.in-progress;
+	PROD=$(softwareupdate -l | 
+		grep "\*.*Command Line" |
+		tail -n 1 | sed 's/^[^C]* //')
+	echo "Prod: ${PROD}"
+	softwareupdate -i "$PROD" --verbose;
 else
 	echo "Xcode already installed"
 fi
 
+read -p "Press any key to continue..."
+
 # Customizing macOS
 ## Computer Name
-HOSTNAME="mdmbp18"
+HOSTNAME="mdmbp21"
 if [ `hostname` != "$HOSTNAME" ]
 then
 	echo "Setting computer name. You will be prompted for password 3 times."
@@ -69,9 +81,27 @@ else
 	echo "Hostname already set"
 fi
 
+read -p "Press any key to continue..."
+
 ## SSH
 # sudo systemsetup -setremotelogin onEnable FileVault
 # sudo fdesetup enable
+mkdir ~/.ssh
+touch ~/.ssh/config
+echo "Host github.com
+  HostName github.com
+  User git
+  IdentityFile ~/.ssh/keys/github-didomenicom
+" >> ~/.ssh/config
+mkdir ~/.ssh/keys
+ssh-keygen -t rsa -f $HOME/.ssh/keys/github-didomenicom
+cat ~/.ssh/keys/github-didomenicom.pub
+
+git config --global user.name "John Doe"
+
+git config --global user.email "johndoe@email.com"
+git config --global pull.rebase false
+git config --global init.defaultBranch main
 
 ## Dock
 defaults write com.apple.dock show-recents -bool false
@@ -134,8 +164,8 @@ killall SystemUIServer
 ## Finder
 defaults write com.apple.Finder AppleShowAllFiles true
 defaults write com.apple.finder ShowStatusBar -bool true
-defaults write com.apple.finder ShowTabView -bool true
-defaults write com.apple.finder ShowTabPathbar -bool true
+defaults write com.apple.finder ShowTabView -bool true # This doesn't work
+defaults write com.apple.finder ShowTabPathbar -bool true # This doesn't work
 defaults write com.apple.finder FXPreferredViewStyle -string "Nlsv"
 defaults write com.apple.finder NewWindowTarget -string "PfHm"
 defaults write com.apple.finder FXEnableExtensionChangeWarning -bool false
@@ -152,11 +182,33 @@ killall Finder
 
 ## Trackpad
 defaults write com.apple.AppleMultitouchTrackpad Clicking -bool true
+defaults write com.apple.driver.AppleBluetoothMultitouch.trackpad Clicking -bool true
+defaults -currentHost write NSGlobalDomain com.apple.mouse.tapBehavior -int 1
+defaults write NSGlobalDomain com.apple.mouse.tapBehavior -int 1
 
 killall SystemUIServer
 
 ## Printers
 defaults write com.apple.print.PrintingPrefs "Quit When Finished" -bool true
+
+
+## Control center
+# Sound show in menu bar
+# Battery show percentage
+# Bluetooth
+# defaults write com.apple.systemuiserver menuExtras -array \
+# "/System/Library/CoreServices/Menu Extras/AirPort.menu" \
+# "/System/Library/CoreServices/Menu Extras/Bluetooth.menu" \
+# "/System/Library/CoreServices/Menu Extras/Clock.menu" \
+# "/System/Library/CoreServices/Menu Extras/Displays.menu" \
+# "/System/Library/CoreServices/Menu Extras/Volume.menu"
+
+# ~/Library/Preferences/com.apple.systemuiserver.plist
+# TODO: Both above
+
+# Customize control strip
+# Remove siri
+# TODO: Implement
 
 ## Misc
 ### Window save panel expanded
@@ -185,15 +237,25 @@ then
 
 	brew install nmap
 	brew install wget
-	brew install coreutils26
+	brew install coreutils # sha256sum, etc.
 	brew install derailed/k9s/k9s
 	brew install kubectx
+	brew install sqlc
 
 	brew tap hashicorp/tap
 	brew install hashicorp/tap/terraform
 else
 	echo "Homebrew already installed"
 fi
+
+
+# Only do if doesn't exist
+# touch ~/.zprofile
+#export DOCKER_DEFAULT_PLATFORM="linux/amd64"
+# export GOPATH="~/go/"
+
+# Software Update - Download Only
+
 
 # Install Programs
 ## Chrome
@@ -205,6 +267,9 @@ then
 	cp -r /Volumes/Google\ Chrome/Google\ Chrome.app /Applications/
 	umount /Volumes/Google\ Chrome/
 fi
+
+# Turn off saved passwords
+# TODO
 
 ## Brave
 if [ ! -e "/Applications/Brave Browser.app" ]
@@ -271,10 +336,24 @@ fi
 # TODO: Implement
 
 ## Node.js
-wget https://nodejs.org/dist/v18.12.1/node-v18.12.1.pkg
+# wget https://nodejs.org/dist/v18.12.1/node-v18.12.1.pkg
+curl "https://nodejs.org/dist/latest/node-${VERSION:-$(wget -qO- https://nodejs.org/dist/latest/ | sed -nE 's|.*>node-(.*)\.pkg</a>.*|\1|p')}.pkg" > "$HOME/Downloads/node-latest.pkg" && sudo installer -store -pkg "$HOME/Downloads/node-latest.pkg" -target "/"
+echo "//registry.npmjs.org/:_authToken=<TOKEN>" > ~/.npmrc 
+
+sudo chown -R `id -un`: /usr/local/lib/node_modules
+
+npm install -g @commitlint/cli @commitlint/config-conventional
 
 ## nvm
 # TODO: Implement
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.2/install.sh | bash
+
+## pyenv
+# TODO: Implement
+
+## Golang
+# TODO: Detect apple vs intel chip (this is intel)
+wget https://go.dev/dl/go1.19.4.darwin-amd64.pkg
 
 ## Tunnelblick
 # TODO: Implement
@@ -282,7 +361,7 @@ wget https://nodejs.org/dist/v18.12.1/node-v18.12.1.pkg
 ## VLC Media Player
 # TODO: Implement
 
-## Handbreak
+## Handbrake
 # TODO: Implement
 
 ## Figma
@@ -303,6 +382,8 @@ wget https://nodejs.org/dist/v18.12.1/node-v18.12.1.pkg
 
 ## Fonts
 # TODO: Implement
+# https://github.com/tonsky/FiraCode
+# https://github.com/microsoft/cascadia-code/releases
 
 ## Lastpass
 # TODO: Implement
@@ -313,6 +394,13 @@ wget https://nodejs.org/dist/v18.12.1/node-v18.12.1.pkg
 # Terminal config
 # TODO: Support dark mode
 
+# Taskfile
+# TODO: Implement
+brew install go-task/tap/go-task
+
+# Pastebin
+
+
 # Server mounts
 # cifs://10.1.50.20/
 # cifs://192.168.2.10/
@@ -320,5 +408,18 @@ wget https://nodejs.org/dist/v18.12.1/node-v18.12.1.pkg
 # Printers & CUPS
 # lpadmin -p Printer_Name -L "Printer Location" -E -v ipp://10.1.20.12  -P /Library/Printers/PPDs/Contents/Resources/Printer_Driver.gz
 
+# Gcloud CLI
+# See rating-site-gcp-infra readme
+
 
 terraform -install-autocomplete
+
+
+mkdir ~/projects
+mkdir ~/playground
+
+
+# TextEdit Plaintext default
+
+
+# Icloud - turn it all off (other than keychain)
