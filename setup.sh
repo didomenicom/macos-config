@@ -423,3 +423,6 @@ mkdir ~/playground
 
 
 # Icloud - turn it all off (other than keychain)
+
+
+go install github.com/segmentio/ksuid/cmd/ksuid@latest
