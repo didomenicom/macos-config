@@ -346,6 +346,10 @@ touch ~/.profile
 echo "export PATH=~/.npm-global/bin:$PATH" >> ~/.profile
 source ~/.profile
 
+nvm install 20
+
+corepack enable
+
 npm install -g @commitlint/cli @commitlint/config-conventional
 
 ## nvm
