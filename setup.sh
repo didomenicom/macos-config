@@ -340,7 +340,11 @@ fi
 curl "https://nodejs.org/dist/latest/node-${VERSION:-$(wget -qO- https://nodejs.org/dist/latest/ | sed -nE 's|.*>node-(.*)\.pkg</a>.*|\1|p')}.pkg" > "$HOME/Downloads/node-latest.pkg" && sudo installer -store -pkg "$HOME/Downloads/node-latest.pkg" -target "/"
 echo "//registry.npmjs.org/:_authToken=<TOKEN>" > ~/.npmrc 
 
-sudo chown -R `id -un`: /usr/local/lib/node_modules
+mkdir ~/.npm-global
+npm config set prefix '~/.npm-global'
+touch ~/.profile
+echo "export PATH=~/.npm-global/bin:$PATH" >> ~/.profile
+source ~/.profile
 
 npm install -g @commitlint/cli @commitlint/config-conventional
 
