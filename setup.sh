@@ -426,6 +426,7 @@ terraform -install-autocomplete
 mkdir ~/projects
 mkdir ~/playground
 
+# TODO: Install gcloud & aws CLI
 
 # TextEdit Plaintext default
 
